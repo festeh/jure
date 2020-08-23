@@ -48,25 +48,25 @@ class SeleniumHandler:
         self.check_popup()
         self.driver.execute_script(
             f"""
-                        var cell = Jupyter.notebook.get_cell({cell_num});
-                        cell.element[0].scrollIntoView();
-                        """)
-
+            var cell = Jupyter.notebook.get_cell({cell_num});
+            cell.element[0].scrollIntoView();
+            """)
 
     def check_popup(self):
-        reload_btn = None
         try:
             self.driver.switch_to.alert.accept()
-        except Exception as e:
-            print(e)
+        except:
+            pass
+        reload_btn = None
         try:
-            reload_btn = self.driver.find_element_by_class_name("btn-warning")
+            notebook_changed_modal = self.driver.find_element_by_css_selector("body.modal-open")
+            reload_btn = notebook_changed_modal.find_element_by_class_name("btn-warning")
         except NoSuchElementException:
             pass
         if reload_btn is not None:
             reload_btn.click()
             try:
-                self.driver.switch_to_alert().accept()
+                self.driver.switch_to.alert.accept()
             except:
                 pass
 
