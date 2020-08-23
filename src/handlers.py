@@ -5,7 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from watchdog.events import FileSystemEventHandler
 
 from src.index_notebook_cells import CellIndex
-from src.events import EventType
+from src.events import EventType, reload_event, scroll_event
 from src.utils import get_lines_file, get_line_to_scroll
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -34,7 +34,9 @@ class SeleniumHandler:
         if event["type"] == EventType.RELOAD_PAGE:
             self._refresh_page()
         if event["type"] == EventType.GO_TO_CELL:
-            self._scroll_to_cell(event["value"])
+            cell_num = event["value"]
+            self._scroll_to_cell(cell_num)
+            self._execute_cell(cell_num)
 
     def shutdown(self):
         self.driver.close()
@@ -50,6 +52,12 @@ class SeleniumHandler:
             f"""
             var cell = Jupyter.notebook.get_cell({cell_num});
             cell.element[0].scrollIntoView();
+            """)
+
+    def _execute_cell(self, cell_num):
+        self.driver.execute_script(
+            f"""
+            Jupyter.notebook.execute_cells([0,{cell_num}]);
             """)
 
     def check_popup(self):
@@ -85,18 +93,16 @@ class WatchdogHandler(FileSystemEventHandler):
         new = statbuf.st_mtime
         print(str(new) + " is new")
         print(str(self.old) + " is old")
-        cell_num = None
         if (new - self.old) > 0.5:
             print("Reloading")
-            self.handler.handle({"type": EventType.RELOAD_PAGE})
+            self.handler.handle(reload_event)
             new_lines = get_lines_file(self.file_path)
             line = get_line_to_scroll(self.file_lines, new_lines)
             self.file_lines = new_lines
-            index = CellIndex(new_lines)
-            cell_num = index.get_cell(line)
-            scroll_event = {"type": EventType.GO_TO_CELL, "value": cell_num}
-            print(line, scroll_event)
-            self.handler.handle(scroll_event)
+            cell_num = CellIndex(new_lines).get_cell(line)
+            new_scroll_event = scroll_event(cell_num)
+            print(line, new_scroll_event)
+            self.handler.handle(new_scroll_event)
         else:
             print("No change")
         self.old = new
