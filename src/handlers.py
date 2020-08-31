@@ -11,7 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
-class EmptyHandler:
+class BaseHandler:
     def handle(self, event):
         print(event)
 
@@ -19,7 +19,7 @@ class EmptyHandler:
         pass
 
 
-class SeleniumHandler:
+class SeleniumHandler(BaseHandler):
     def __init__(self, page):
         options = Options()
         options.add_experimental_option('excludeSwitches', ['enable-automation'])
@@ -89,11 +89,8 @@ class WatchdogHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         print(f'event type: {event}')
-        statbuf = os.stat(self.file_path)
-        new = statbuf.st_mtime
-        print(str(new) + " is new")
-        print(str(self.old) + " is old")
-        if (new - self.old) > 0.5:
+        file_updated_timestamp = self.get_file_update_timestamp()
+        if (file_updated_timestamp - self.old) > 0.5:
             print("Reloading")
             self.handler.handle(reload_event)
             new_lines = get_lines_file(self.file_path)
@@ -105,4 +102,16 @@ class WatchdogHandler(FileSystemEventHandler):
             self.handler.handle(new_scroll_event)
         else:
             print("No change")
-        self.old = new
+        self.old = file_updated_timestamp
+
+    def get_file_update_timestamp(self):
+        statbuf = os.stat(self.file_path)
+        new = statbuf.st_mtime
+        print(str(new) + " is new")
+        print(str(self.old) + " is old")
+        return new
+
+
+class AngryHandler(BaseHandler):
+    def handle(self, event):
+        raise RuntimeError("You did a mistake...")
