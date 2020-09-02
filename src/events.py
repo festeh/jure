@@ -9,5 +9,5 @@ class EventType(Enum):
 reload_event = dict(type=EventType.RELOAD_PAGE)
 
 
-def scroll_event(cell_num):
-    return {"type": EventType.GO_TO_CELL, "value": cell_num}
+def scroll_event(cell_num, timestamp):
+    return {"type": EventType.GO_TO_CELL, "value": cell_num, "timestamp": timestamp}
