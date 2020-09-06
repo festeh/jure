@@ -54,6 +54,7 @@ class SeleniumHandler(BaseHandler):
 
     def _scroll_to_cell(self, cell_num):
         self.check_popup()
+        logger.info(f"Scrolling to cell {cell_num}")
         self.driver.execute_script(
             f"""
             var cell = Jupyter.notebook.get_cell({cell_num});
