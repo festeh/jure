@@ -14,7 +14,3 @@ class CellIndex:
 
     def get_cell(self, line):
         return bisect_left(self.index, line)
-
-
-if __name__ == '__main__':
-    file_path = "notebooks/Untitled.py"

@@ -1,8 +1,14 @@
 import os
+from sys import stderr
 from time import sleep
 
 from selenium.common.exceptions import NoSuchElementException
 from watchdog.events import FileSystemEventHandler
+
+from loguru import logger
+
+logger.remove()
+logger.add(stderr, format="{time: HH:mm:SSSS} {level} {message}", level="INFO")
 
 from src.index_notebook_cells import CellIndex
 from src.events import EventType, reload_event, scroll_event
@@ -85,33 +91,36 @@ class WatchdogHandler(FileSystemEventHandler):
         self.file_path = file_path
         self.notebook_path = get_notebook_path_from_file_path(file_path)
         self.file_lines = get_lines_file(self.file_path)
-        self.old = 0
+        self.prev_update_timestamp = 0
         self.handler = handler
 
     def on_modified(self, event):
-        print(f'event type: {event}')
+        logger.info(f'event type: {event}')
         file_update_timestamp = get_file_update_timestamp(self.file_path)
         notebook_update_timestamp = get_file_update_timestamp(self.notebook_path)
         if self.should_reload(file_update_timestamp, notebook_update_timestamp):
-            print("Reloading")
+            logger.info("Reloading")
             self.handler.handle(reload_event)
             new_lines = get_lines_file(self.file_path)
             line = get_line_to_scroll(self.file_lines, new_lines)
             self.file_lines = new_lines
             cell_num = CellIndex(new_lines).get_cell(line)
-            new_scroll_event = scroll_event(cell_num, file_update_timestamp)
-            print(line, new_scroll_event)
+            new_scroll_event = scroll_event(cell_num)
+            logger.info(f"{line}, {new_scroll_event}")
             self.handler.handle(new_scroll_event)
         else:
-            print("No change")
-        self.old = file_update_timestamp
+            logger.info("No change")
+        self.prev_update_timestamp = file_update_timestamp
 
     def should_reload(self, file_update_timestamp, notebook_update_timestamp):
-        if (file_update_timestamp - self.old) > 0.5:
+        if (file_update_timestamp - self.prev_update_timestamp) > 0.5:
             if (file_update_timestamp - notebook_update_timestamp) > 0.5:
                 return True
+            else:
+                logger.info("Notebook was recently reloaded")
+        else:
+            logger.info("File was recently updated")
         return False
-
 
 
 class AngryHandler(BaseHandler):
