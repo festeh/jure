@@ -109,8 +109,6 @@ class WatchdogHandler(FileSystemEventHandler):
             new_scroll_event = scroll_event(cell_num)
             logger.info(f"{line}, {new_scroll_event}")
             self.handler.handle(new_scroll_event)
-        else:
-            logger.info("No change")
         self.prev_update_timestamp = file_update_timestamp
 
     def should_reload(self, file_update_timestamp, notebook_update_timestamp):
@@ -118,9 +116,9 @@ class WatchdogHandler(FileSystemEventHandler):
             if (file_update_timestamp - notebook_update_timestamp) > 0.5:
                 return True
             else:
-                logger.info("Notebook was recently reloaded")
+                logger.info("Notebook was recently reloaded: no change")
         else:
-            logger.info("File was recently updated")
+            logger.info("File was recently updated: no change")
         return False
 
 
