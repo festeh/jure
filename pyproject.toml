@@ -1,6 +1,6 @@
 [tool.poetry]
 
-name = "jupyter-browser-reload"
+name = "jure"
 version = "0.1.0"
 description = """
 An utility that extends Jupytext. Allows to auto-refresh browser when source file is changed.
