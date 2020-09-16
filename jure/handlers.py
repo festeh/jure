@@ -1,20 +1,18 @@
-import os
 from sys import stderr
 from time import sleep
 
+from loguru import logger
+from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.options import Options
 from watchdog.events import FileSystemEventHandler
 
-from loguru import logger
+from jure.events import reload_event, scroll_event, EventType
+from jure.index_notebook_cells import CellIndex
+from jure.utils import get_notebook_path_from_file_path, get_lines_file, get_file_update_timestamp, get_line_to_scroll
 
 logger.remove()
 logger.add(stderr, format="{time: HH:mm:SSSS} {level} {message}", level="INFO")
-
-from src.index_notebook_cells import CellIndex
-from src.events import EventType, reload_event, scroll_event
-from src.utils import get_lines_file, get_line_to_scroll, get_file_update_timestamp, get_notebook_path_from_file_path
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
 
 class BaseHandler:

@@ -7,8 +7,8 @@ import pytest
 from selenium.webdriver.common.keys import Keys
 from watchdog.observers import Observer
 
-from src.events import reload_event
-from src.handlers import SeleniumHandler, WatchdogHandler, AngryHandler
+from jure.events import reload_event
+from jure.handlers import SeleniumHandler, WatchdogHandler, AngryHandler
 from test.utils import start_jupyter_server, modify_ipynb_file
 
 this_dir = Path(__file__).parent
