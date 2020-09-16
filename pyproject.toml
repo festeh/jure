@@ -1,5 +1,4 @@
 [tool.poetry]
-
 name = "jure"
 version = "0.1.0"
 description = """
@@ -21,11 +20,14 @@ classifiers = [
 keywords = ["jupyter", "reload", "jupytext"]
 authors = ["Dmitry Lipin <d.lipin@outlook.com>"]
 
-[tool.poetry.dependencies]
+[tool.poetry.scripts]
+jure = 'jure.main:main'
 
+[tool.poetry.dependencies]
 python="^3.6"
 selenium="^3.141.0"
 jupytext="^1.5.2"
 watchdog="^0.10.3"
 loguru="^0.5.2"
 pytest="^6.0.1"
+
