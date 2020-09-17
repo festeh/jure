@@ -25,7 +25,8 @@ def main(args=None):
     port = parsed_args.port
     file_path = get_file_path_from_notebook_path(notebook_path)
     assert Path(file_path).exists()
-    page = f"http://localhost:{port}/notebooks/{notebook_path}?token={parsed_args.token}"
+    notebook_relative_path = notebook_path.relative_to(parsed_args.jupyter_root_dir)
+    page = f"http://localhost:{port}/notebooks/{notebook_relative_path}?token={parsed_args.token}"
     handler = SeleniumHandler(page)
     observer = Observer()
     event_handler = WatchdogHandler(file_path, handler)
