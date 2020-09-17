@@ -1,6 +1,7 @@
 import difflib
 import os
 from pathlib import Path
+from loguru import logger
 
 
 def get_lines_file(file_path):
@@ -18,6 +19,7 @@ def get_line_to_scroll(old_lines, new_lines) -> int:
             lin_num += 1
         if code == "+ ":
             diffing_lines.append(lin_num)
+    logger.info(f"Diff. lines: {diffing_lines}")
     if diffing_lines:
         return diffing_lines[-1]
     return lin_num
