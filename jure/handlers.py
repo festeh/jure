@@ -99,14 +99,17 @@ class WatchdogHandler(FileSystemEventHandler):
         notebook_update_timestamp = get_file_update_timestamp(self.notebook_path)
         if self.should_reload(file_update_timestamp, notebook_update_timestamp):
             logger.info("Reloading")
-            self.handler.handle(reload_event)
-            new_lines = get_lines_file(self.file_path)
-            line = get_line_to_scroll(self.file_lines, new_lines)
-            self.file_lines = new_lines
-            cell_num = CellIndex(new_lines).get_cell(line)
-            new_scroll_event = scroll_event(cell_num)
-            logger.info(f"{line}, {new_scroll_event}")
-            self.handler.handle(new_scroll_event)
+            try:
+                self.handler.handle(reload_event)
+                new_lines = get_lines_file(self.file_path)
+                line = get_line_to_scroll(self.file_lines, new_lines)
+                self.file_lines = new_lines
+                cell_num = CellIndex(new_lines).get_cell(line)
+                new_scroll_event = scroll_event(cell_num)
+                logger.info(f"{line}, {new_scroll_event}")
+                self.handler.handle(new_scroll_event)
+            except Exception as e:
+                logger.exception(e)
         self.prev_update_timestamp = file_update_timestamp
 
     def should_reload(self, file_update_timestamp, notebook_update_timestamp):
