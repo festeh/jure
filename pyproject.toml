@@ -1,9 +1,7 @@
 [tool.poetry]
 name = "jure"
-version = "0.1.0"
-description = """
-An utility that extends Jupytext. Allows to auto-refresh browser when source file is changed.
-"""
+version = "0.1.2"
+description = "An utility that extends Jupytext. Allows to auto-refresh browser when source file is changed."
 license = "MIT"
 readme = "README.md"
 classifiers = [
@@ -30,4 +28,9 @@ jupytext="^1.5.2"
 watchdog="^0.10.3"
 loguru="^0.5.2"
 pytest="^6.0.1"
+
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
 
