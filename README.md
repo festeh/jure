@@ -40,6 +40,8 @@ Where `[TOKEN]` as an access token which is required to access Jupyter Notebook 
 This is an experimental and unstable product, any issues, suggestions, feature requests and PRs are appreciated. Current problems:
 
 * Only Google Chrome web browser is supported
+* Selenium might be inconvenient
+* No password auth / remote notebook hosts
 * Only last changed cell is executed, also first cell with imports is always executed
 * In some rare cases user needs to reload browser tab manually
 * For large notebooks page reload might be too slow (tough one)
