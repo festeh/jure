@@ -34,4 +34,12 @@ Then run
 ```bash
 jure --token=[TOKEN] --jupyter_root_dir=[ROOT_DIR] --notebook_path=[NOTEBOOK_PATH]
 ```
-Where `[TOKEN]` as an access token which is required to access Jupyter Notebook from browser, `[ROOT_DIR]` is a path to directory from which `jupyter notebook ...` command was executed and `[NOTEBOOK_PATH]` is a path to the notebook .ipynb file you'll work with. 
+Where `[TOKEN]` as an access token which is required to access Jupyter Notebook from browser, `[ROOT_DIR]` is a path to directory from which `jupyter notebook ...` command was executed and `[NOTEBOOK_PATH]` is a path to the notebook .ipynb file you'll work with.
+
+## Limitations
+This is an experimental and unstable product, any issues, suggestions, feature requests and PRs are appreciated. Current problems:
+
+* Only Google Chrome web browser is supported
+* Only last changed cell is executed, also first cell with imports is always executed
+* In some rare cases user needs to reload browser tab manually
+* For large notebooks page reload might be too slow (tough one)
