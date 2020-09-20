@@ -3,7 +3,7 @@ from time import sleep
 
 from loguru import logger
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.chrome.options import Options
 from watchdog.events import FileSystemEventHandler
 
@@ -32,7 +32,12 @@ class SeleniumHandler(BaseHandler):
         options.add_argument("--disable-popup-blocking")
         self.driver = webdriver.Chrome(options=options)
         self.driver.execute_script("window.onbeforeunload = null;")
-        self.driver.get(page)
+        try:
+            self.driver.get(page)
+        except WebDriverException as e:
+            msg = f"""Unable to load Jupyter Notebook.
+                      Make sure that Jupyter Notebook is available on page {page}"""
+            raise RuntimeError(msg)
 
     def handle(self, event):
         if event["type"] == EventType.RELOAD_PAGE:
