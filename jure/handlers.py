@@ -70,7 +70,6 @@ class SeleniumHandler(BaseHandler):
             exec_script = f"""
                 Jupyter.notebook.execute_cells([{','.join(changed_cells)}]);
                 """
-            logger.info(exec_script)
             self.driver.execute_script(exec_script)
 
     def check_popup(self):

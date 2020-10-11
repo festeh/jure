@@ -18,4 +18,4 @@ class CellsIndex:
     def get_last_cell(self):
         if not self.index:
             return 0
-        return self.index[-1]
+        return len(self.index) - 1
