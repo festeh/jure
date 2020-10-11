@@ -1,5 +1,6 @@
 from sys import stderr
 from time import sleep
+from typing import List
 
 from loguru import logger
 from selenium import webdriver
@@ -7,9 +8,9 @@ from selenium.common.exceptions import NoSuchElementException, WebDriverExceptio
 from selenium.webdriver.chrome.options import Options
 from watchdog.events import FileSystemEventHandler
 
-from jure.events import reload_event, scroll_event, EventType
-from jure.index_notebook_cells import CellIndex
-from jure.utils import get_notebook_path_from_file_path, get_lines_file, get_file_update_timestamp, get_line_to_scroll
+from jure.events import reload_event, cells_changed_event, EventType
+from jure.index_notebook_cells import CellsIndex
+from jure.utils import get_notebook_path_from_file_path, get_lines_file, get_file_update_timestamp, get_diffing_lines
 
 logger.remove()
 logger.add(stderr, format="{time: HH:mm:SSSS} {level} {message}", level="INFO")
@@ -40,12 +41,11 @@ class SeleniumHandler(BaseHandler):
             raise RuntimeError(msg)
 
     def handle(self, event):
-        if event["type"] == EventType.RELOAD_PAGE:
+        if event['type'] == EventType.RELOAD_PAGE:
             self._refresh_page()
-        if event["type"] == EventType.GO_TO_CELL:
-            cell_num = event["value"]
-            self._scroll_to_cell(cell_num)
-            self._execute_cell(cell_num)
+        if event['type'] == EventType.HANDLE_CHANGED_CELLS:
+            self._scroll_to_cell(event['cell_to_scroll'])
+            self._execute_cells(event['changed_cells'])
 
     def shutdown(self):
         self.driver.close()
@@ -64,11 +64,14 @@ class SeleniumHandler(BaseHandler):
             cell.element[0].scrollIntoView();
             """)
 
-    def _execute_cell(self, cell_num):
-        self.driver.execute_script(
-            f"""
-            Jupyter.notebook.execute_cells([0,{cell_num}]);
-            """)
+    def _execute_cells(self, changed_cells: List[str]):
+        logger.info(f"Executing cells {changed_cells}")
+        if changed_cells:
+            exec_script = f"""
+                Jupyter.notebook.execute_cells([{','.join(changed_cells)}]);
+                """
+            logger.info(exec_script)
+            self.driver.execute_script(exec_script)
 
     def check_popup(self):
         try:
@@ -107,11 +110,20 @@ class WatchdogHandler(FileSystemEventHandler):
             try:
                 self.handler.handle(reload_event)
                 new_lines = get_lines_file(self.file_path)
-                line = get_line_to_scroll(self.file_lines, new_lines)
+                diffing_lines = get_diffing_lines(self.file_lines, new_lines)
                 self.file_lines = new_lines
-                cell_num = CellIndex(new_lines).get_cell(line)
-                new_scroll_event = scroll_event(cell_num)
-                logger.info(f"{line}, {new_scroll_event}")
+                cells_index = CellsIndex(new_lines)
+                if not diffing_lines:
+                    cell_to_scroll = cells_index.get_last_cell()
+                else:
+                    cell_to_scroll = cells_index.get_cell(diffing_lines[-1])
+                diffing_cells = set()
+                for line in diffing_lines:
+                    diffing_cells.add(cells_index.get_cell(line))
+                diffing_cells = [str(cell) for cell in sorted(diffing_cells)]
+                new_scroll_event = cells_changed_event(cell_to_scroll=cell_to_scroll,
+                                                       diffing_cells=diffing_cells)
+                logger.info(str(new_scroll_event))
                 self.handler.handle(new_scroll_event)
             except Exception as e:
                 logger.exception(e)

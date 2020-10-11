@@ -3,11 +3,13 @@ from enum import Enum
 
 class EventType(Enum):
     RELOAD_PAGE = 1
-    GO_TO_CELL = 2
+    HANDLE_CHANGED_CELLS = 2
 
 
 reload_event = dict(type=EventType.RELOAD_PAGE)
 
 
-def scroll_event(cell_num):
-    return {"type": EventType.GO_TO_CELL, "value": cell_num}
+def cells_changed_event(diffing_cells, cell_to_scroll):
+    return {"type": EventType.HANDLE_CHANGED_CELLS,
+            "changed_cells": diffing_cells,
+            "cell_to_scroll": cell_to_scroll}

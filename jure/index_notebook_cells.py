@@ -1,7 +1,7 @@
 from bisect import bisect_left
 
 
-class CellIndex:
+class CellsIndex:
     def __init__(self, lines):
         cell_num = None
         self.index = []
@@ -14,3 +14,8 @@ class CellIndex:
 
     def get_cell(self, line):
         return bisect_left(self.index, line)
+
+    def get_last_cell(self):
+        if not self.index:
+            return 0
+        return self.index[-1]

@@ -1,6 +1,8 @@
 import difflib
 import os
 from pathlib import Path
+from typing import List
+
 from loguru import logger
 
 
@@ -9,20 +11,21 @@ def get_lines_file(file_path):
         return f.readlines()
 
 
-def get_line_to_scroll(old_lines, new_lines) -> int:
+def get_diffing_lines(old_lines, new_lines) -> List[int]:
     diffs = difflib.Differ().compare(old_lines, new_lines)
     lin_num = 0
+    diffing_lines_num = []
     diffing_lines = []
     for line in diffs:
         code = line[:2]
         if code in ("  ", "+ "):
             lin_num += 1
         if code == "+ ":
-            diffing_lines.append(lin_num)
+            diffing_lines.append(line)
+            diffing_lines_num.append(lin_num)
+    logger.info(f"Diff. lines numbers: {diffing_lines_num}")
     logger.info(f"Diff. lines: {diffing_lines}")
-    if diffing_lines:
-        return diffing_lines[-1]
-    return lin_num
+    return diffing_lines_num
 
 
 def get_file_path_from_notebook_path(notebook_path):
