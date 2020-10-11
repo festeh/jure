@@ -1,7 +1,7 @@
 # Jupyter Browser Reload
 
 Flow-saving tool that automatically reloads Jupyter Notebook in a browser
-when its source .py file is changed and executes changed cells.
+when its source .py file is changed and executes all changed cells.
 
 It uses
 * [Jupytext](https://github.com/mwouts/jupytext) - to synchronize .ipynb and .py files
@@ -9,11 +9,11 @@ It uses
 * [Selenium](https://github.com/SeleniumHQ/selenium) - to have a full control over a browser with opened Jupyter Notebook 
 
 ## Why Jure
-Jupytext is a great tool that for instance allows user to benefit from static code analysis of Jupyter Notebooks. However I always struggled with this workflow: after each edit of .py file I needed to manually reload browser and execute changed cells.
+Jupytext is a great tool that for instance allows user to benefit from static code analysis of Jupyter Notebooks. However I always struggled with this workflow: after each edit of .py file I needed to manually reload browser and execute all changed cells.
 
 ![standard](assets/standard.gif)
 
-Jure automatically reloads browser on each .py file change, so it would instantly show actual notebook content. Additionally it scrolls to last changed cell and executes it. 
+Jure automatically reloads browser on each .py file change, so it would instantly show actual notebook content. Additionally it scrolls to last changed cell and executes all cells that were changed. 
  
 ![with jure](assets/with_jure.gif)
 
@@ -42,6 +42,5 @@ This is an experimental and unstable product, any issues, suggestions, feature r
 * Only Google Chrome web browser is supported
 * Selenium might be inconvenient
 * No password auth / remote notebook hosts
-* Only last changed cell is executed, also first cell with imports is always executed
 * In some rare cases user needs to reload browser tab manually
 * For large notebooks page reload might be too slow (tough one)
