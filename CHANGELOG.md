@@ -10,3 +10,7 @@ All notable changes to this project will be documented in this file.
 * less logs
 ## [0.2.2] - 2020-10-13
 * simplify CellsIndex, do not skip first cell
+## [0.3.0] - 2020-10-14
+* Browser is no longer reloaded! Instead cell content is changed with JS
+* Now parsing of notebooks is done with Jupytext
+* jure now disables autosave of Jupyter Notebooks

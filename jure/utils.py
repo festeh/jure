@@ -6,9 +6,10 @@ from typing import List
 from loguru import logger
 
 
-def get_lines_file(file_path):
+def get_file(file_path):
     with open(file_path) as f:
-        return f.readlines()
+        data = f.read()
+    return data
 
 
 def get_diffing_lines(old_lines, new_lines) -> List[int]:
