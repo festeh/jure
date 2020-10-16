@@ -81,7 +81,10 @@ data.forEach(function (cell) {{
     Jupyter.notebook.get_cell(cell.index).set_text(cell.content)
 }});
 """
-            self.driver.execute_script(update_script)
+            try:
+                self.driver.execute_script(update_script)
+            except:
+                self._refresh_page()
             exec_script = f"""
                 Jupyter.notebook.execute_cells([{','.join([c["index"] for c in changed_cells])}]);
                 """
