@@ -14,3 +14,7 @@ All notable changes to this project will be documented in this file.
 * Browser is no longer reloaded! Instead cell content is changed with JS
 * Now parsing of notebooks is done with Jupytext
 * jure now disables autosave of Jupyter Notebooks
+## [0.3.1] - 2020-10-16
+* Disable autosave after each page reload
+* Try to reload page if content changed significantly
+* Do not check notebook update timestamp
