@@ -60,6 +60,7 @@ class SeleniumHandler(BaseHandler):
         self.check_popup()
         sleep(0.1)
         self.driver.refresh()
+        self.driver.execute_script("Jupyter.notebook.set_autosave_interval(0);")
 
     def _scroll_to_cell(self, cell_num: Optional[int]):
         self.check_popup()
