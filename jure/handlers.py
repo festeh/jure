@@ -124,7 +124,6 @@ class WatchdogHandler(FileSystemEventHandler):
         self.handler = handler
 
     def on_modified(self, event):
-        logger.info(f"event type: {event}")
         file_update_timestamp = get_file_update_timestamp(self.file_path)
         notebook_update_timestamp = get_file_update_timestamp(self.notebook_path)
         if self.should_reload(file_update_timestamp, notebook_update_timestamp):
