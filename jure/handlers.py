@@ -67,9 +67,7 @@ class SeleniumHandler(BaseHandler):
         if cell_num is not None:
             logger.info(f"Scrolling to cell {cell_num}")
             self.driver.execute_script(
-                f"""
-                Jupyter.notebook.scroll_to_cell({cell_num});
-                """
+                f"""Jupyter.notebook.scroll_to_cell({cell_num});"""
             )
 
     def _execute_cells(self, changed_cells: List[Dict]):
@@ -154,11 +152,9 @@ class WatchdogHandler(FileSystemEventHandler):
         self.prev_update_timestamp = file_update_timestamp
 
     def should_reload(self, file_update_timestamp, notebook_update_timestamp):
+        logger.info(f"update ts file:{file_update_timestamp}, nb:{notebook_update_timestamp}")
         if (file_update_timestamp - self.prev_update_timestamp) > 0.5:
-            if (file_update_timestamp - notebook_update_timestamp) > 0.5:
-                return True
-            else:
-                logger.info("Notebook was recently reloaded: no change")
+            return True
         else:
             logger.info("File was recently updated: no change")
         return False
